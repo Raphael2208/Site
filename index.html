@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- QR Code Generator Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- Tone.js Audio Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <!-- Google Fonts: Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,6 +38,37 @@
 </head>
 <body class="bg-gray-900 text-white selection:bg-blue-500 selection:text-white">
 
+    <!-- ===== NAVBAR FIXA ===== -->
+    <nav class="fixed top-0 left-0 w-full bg-gray-900/90 border-b border-gray-800 z-50 shadow-lg">
+      <div class="container mx-auto px-4 flex items-center justify-between h-16">
+        <!-- Logo -->
+        <div class="flex items-center gap-2 cursor-pointer" id="navbar-logo">
+          <img src="https://cdn-icons-png.flaticon.com/512/1055/1055687.png" alt="Logo" class="h-8 w-8">
+          <span class="font-black text-xl text-blue-400 tracking-wider">GOTY</span>
+        </div>
+        <!-- Menu -->
+        <ul class="flex gap-6 font-semibold text-white text-sm">
+          <li><button id="nav-home" class="hover:text-blue-400 transition">Início</button></li>
+          <li><button id="nav-event" class="hover:text-blue-400 transition">Mapa do Evento</button></li>
+          <li><button id="nav-register" class="hover:text-blue-400 transition">Inscrição</button></li>
+          <li><button id="nav-artist" class="hover:text-blue-400 transition">Trabalhe Conosco</button></li>
+          <li><button id="nav-food" class="hover:text-blue-400 transition">Alimentação</button></li>
+          <li><button id="nav-other" class="hover:text-blue-400 transition">Outros Eventos</button></li>
+        </ul>
+      </div>
+    </nav>
+    <!-- Espaço para não cobrir o conteúdo -->
+    <div class="h-16"></div>
+
+    <!-- ===== OVERLAY DE INÍCIO ===== -->
+    <div id="start-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-95 flex flex-col items-center justify-center z-50">
+        <h1 class="text-5xl md:text-7xl font-black uppercase tracking-wider text-blue-400 drop-shadow-lg mb-4">Game of the Year</h1>
+        <p class="text-xl text-gray-300 mt-2 mb-8">Clique para iniciar a experiência com som</p>
+        <button id="start-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-10 rounded-full text-xl uppercase tracking-wider glow-effect transition duration-300 transform hover:scale-105">
+            Entrar
+        </button>
+    </div>
+
     <div id="app" class="min-h-screen flex flex-col">
 
         <!-- ===== SEÇÃO PRINCIPAL (HOME) ===== -->
@@ -54,7 +87,7 @@
                     <div class="grid grid-cols-3 grid-rows-3 gap-4 h-96 bg-gray-900/50 p-4 rounded-lg border-2 border-dashed border-gray-600">
                         <!-- Linha 1 -->
                         <div class="col-span-1 row-span-1 bg-red-500/30 rounded-lg flex flex-col items-center justify-center p-2 border border-red-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-red-400 mb-2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17-5-5 5-5"/><path d="M15 12H5"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-red-400 mb-2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17-5-5 5-5"/><path d="M15 12H5"/></svg>
                             <span class="font-semibold text-xs text-center">Saída de Emergência</span>
                         </div>
                         <div class="col-span-1 row-span-1 bg-yellow-500/30 rounded-lg flex flex-col items-center justify-center p-2 border border-yellow-500">
@@ -110,7 +143,7 @@
                         
                         <!-- Plateia / Cadeiras -->
                         <div id="static-chair-container" class="flex-grow grid grid-cols-12 gap-2 p-2">
-                           <!-- Gerado por JS -->
+                            <!-- Gerado por JS -->
                         </div>
                     </div>
                     <button class="back-btn mt-4 text-blue-400 hover:text-blue-300">&larr; Voltar para o mapa</button>
@@ -139,7 +172,7 @@
                                     <span id="selected-seat-display" class="text-gray-400">Nenhum assento selecionado</span>
                                     <button type="button" id="openSeatModalBtn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-1 px-3 rounded-md text-sm">Selecionar</button>
                                 </div>
-                                <input type="hidden" id="selected-seat-input" name="selected-seat">
+                                <input type="hidden" id="selected-seat-input" name="selected-seat" required>
                             </div>
 
                             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg text-lg uppercase tracking-wider glow-effect transition duration-300">
@@ -245,12 +278,12 @@
                              <div class="col-span-1 flex flex-col gap-4">
                                 <!-- Banheiros -->
                                 <div class="bg-yellow-500/30 rounded-lg flex flex-col items-center justify-center p-2 border border-yellow-500 h-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-yellow-400 mb-2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-yellow-400 mb-2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                                     <span class="font-semibold text-sm">Banheiros</span>
                                 </div>
                                  <!-- Área de Alimentação -->
                                 <div class="bg-orange-500/30 rounded-lg flex flex-col items-center justify-center p-2 border border-orange-500 h-full">
-                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-orange-400 mb-2"><path d="M12 2v2"/><path d="M12 20v2"/><path d="M5 12H3m18 0h-2"/><path d="M19.07 4.93l-1.42 1.42M6.34 17.66l-1.42 1.42"/><path d="m19.07 19.07-1.42-1.42M6.34 6.34 4.93 4.93"/><path d="M12 8a4 4 0 0 0-4 4h8a4 4 0 0 0-4-4Z"/><path d="M12 12v8a4 4 0 0 0 4-4h-4Z"/></svg>
+                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-orange-400 mb-2"><path d="M12 2v2"/><path d="M12 20v2"/><path d="M5 12H3m18 0h-2"/><path d="M19.07 4.93l-1.42 1.42M6.34 17.66l-1.42 1.42"/><path d="m19.07 19.07-1.42-1.42M6.34 6.34 4.93 4.93"/><path d="M12 8a4 4 0 0 0-4 4h8a4 4 0 0 0-4-4Z"/><path d="M12 12v8a4 4 0 0 0 4-4h-4Z"/></svg>
                                     <span class="font-semibold text-sm">Alimentação</span>
                                 </div>
                             </div>
@@ -264,7 +297,7 @@
                                             if (i % 8 === 3 || i % 8 === 4) {
                                                  chair.className = '';
                                             } else {
-                                                chair.className = 'bg-gray-600 rounded-sm';
+                                                 chair.className = 'bg-gray-600 rounded-sm';
                                             }
                                             otherChairContainer.appendChild(chair);
                                         }
@@ -294,6 +327,13 @@
             </div>
         </footer>
 
+        <!-- ===== BOTÃO DE MÚSICA ===== -->
+        <button id="music-toggle-btn" class="fixed bottom-5 right-5 z-50 bg-gray-800/50 p-3 rounded-full text-white hover:bg-gray-700/70 transition-colors glow-effect">
+            <!-- Ícone de Volume -->
+            <svg id="volume-on-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            <!-- Ícone de Mudo -->
+            <svg id="volume-off-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 hidden"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+        </button>
     </div>
 
     <!-- ===== MODAL DE SELEÇÃO DE ASSENTOS ===== -->
@@ -307,241 +347,298 @@
                  </div>
                  <!-- Plateia / Cadeiras -->
                  <div id="modal-chair-container" class="flex-grow grid grid-cols-12 gap-2 p-2">
-                    <!-- Cadeiras serão geradas aqui pelo JS -->
+                     <!-- Cadeiras serão geradas aqui pelo JS -->
                  </div>
              </div>
              <div class="flex justify-between items-center">
-                <div class="flex items-center gap-4 text-xs">
-                    <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-sm bg-gray-600"></div><span>Disponível</span></div>
-                    <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-sm bg-blue-500 border-2 border-blue-300"></div><span>Selecionado</span></div>
-                    <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-sm bg-red-800/70"></div><span>Ocupado</span></div>
-                </div>
-                <div class="flex justify-end gap-4">
-                    <button type="button" id="cancelSeatSelectionBtn" class="text-gray-400 hover:text-white">Cancelar</button>
-                    <button type="button" id="confirmSeatSelectionBtn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>Confirmar Assento</button>
-                </div>
+                 <div class="flex items-center gap-4 text-xs">
+                     <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-sm bg-gray-600"></div><span>Disponível</span></div>
+                     <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-sm bg-blue-500 border-2 border-blue-300"></div><span>Selecionado</span></div>
+                     <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-sm bg-red-800/70"></div><span>Ocupado</span></div>
+                 </div>
+                 <div class="flex justify-end gap-4">
+                     <button type="button" id="cancelSeatSelectionBtn" class="text-gray-400 hover:text-white">Cancelar</button>
+                     <button type="button" id="confirmSeatSelectionBtn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>Confirmar Assento</button>
+                 </div>
              </div>
         </div>
     </div>
 
 
     <script>
-        // --- ELEMENTOS DO DOM ---
-        const homePage = document.getElementById('home-page');
-        const registrationPage = document.getElementById('registration-page');
-        const artistPage = document.getElementById('artist-page');
-        const eventDetailsPage = document.getElementById('event-details-page');
-        const foodCourtPage = document.getElementById('food-court-page');
-        const otherEventPage = document.getElementById('other-event-page');
-        const pages = [homePage, registrationPage, artistPage, eventDetailsPage, foodCourtPage, otherEventPage];
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- ELEMENTOS DO DOM ---
+            const homePage = document.getElementById('home-page');
+            const registrationPage = document.getElementById('registration-page');
+            const artistPage = document.getElementById('artist-page');
+            const eventDetailsPage = document.getElementById('event-details-page');
+            const foodCourtPage = document.getElementById('food-court-page');
+            const otherEventPage = document.getElementById('other-event-page');
+            const pages = [homePage, registrationPage, artistPage, eventDetailsPage, foodCourtPage, otherEventPage];
 
-        const goToRegisterBtn = document.getElementById('goToRegisterBtn');
-        const workWithUsBtn = document.getElementById('workWithUsBtn');
-        const backBtns = document.querySelectorAll('.back-btn');
-        const ourEventBtn = document.getElementById('ourEventBtn');
-        const goToFoodCourtBtn = document.getElementById('goToFoodCourtBtn');
-        const goToOtherEventBtn = document.getElementById('goToOtherEventBtn');
+            const goToRegisterBtn = document.getElementById('goToRegisterBtn');
+            const workWithUsBtn = document.getElementById('workWithUsBtn');
+            const backBtns = document.querySelectorAll('.back-btn');
+            const ourEventBtn = document.getElementById('ourEventBtn');
+            const goToFoodCourtBtn = document.getElementById('goToFoodCourtBtn');
+            const goToOtherEventBtn = document.getElementById('goToOtherEventBtn');
 
-        const registrationForm = document.getElementById('registrationForm');
-        const formContainer = document.getElementById('form-container');
-        const qrcodeContainer = document.getElementById('qrcode-container');
-        const qrcodeDiv = document.getElementById('qrcode');
-        const userNameDisplay = document.getElementById('userNameDisplay');
-        const userSeatDisplay = document.getElementById('userSeatDisplay');
-        
-        const artistForm = document.getElementById('artistForm');
-        const artistFormContainer = document.getElementById('artist-form-container');
-        const artistSuccessMessage = document.getElementById('artist-success-message');
+            const registrationForm = document.getElementById('registrationForm');
+            const formContainer = document.getElementById('form-container');
+            const qrcodeContainer = document.getElementById('qrcode-container');
+            const qrcodeDiv = document.getElementById('qrcode');
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const userSeatDisplay = document.getElementById('userSeatDisplay');
+            
+            const artistForm = document.getElementById('artistForm');
+            const artistFormContainer = document.getElementById('artist-form-container');
+            const artistSuccessMessage = document.getElementById('artist-success-message');
 
-        // --- ELEMENTOS DA SELEÇÃO DE ASSENTOS ---
-        const seatSelectionModal = document.getElementById('seat-selection-modal');
-        const openSeatModalBtn = document.getElementById('openSeatModalBtn');
-        const cancelSeatSelectionBtn = document.getElementById('cancelSeatSelectionBtn');
-        const confirmSeatSelectionBtn = document.getElementById('confirmSeatSelectionBtn');
-        const modalChairContainer = document.getElementById('modal-chair-container');
-        const staticChairContainer = document.getElementById('static-chair-container');
-        const selectedSeatDisplay = document.getElementById('selected-seat-display');
-        const selectedSeatInput = document.getElementById('selected-seat-input');
-        
-        // --- ESTADO DA APLICAÇÃO ---
-        let tempSelectedSeat = null;
-        // Simulação de assentos já ocupados
-        const occupiedSeats = ['F1C4', 'F2C8', 'F5C5', 'F6C1', 'F3C10'];
+            // --- ELEMENTOS DA SELEÇÃO DE ASSENTOS ---
+            const seatSelectionModal = document.getElementById('seat-selection-modal');
+            const openSeatModalBtn = document.getElementById('openSeatModalBtn');
+            const cancelSeatSelectionBtn = document.getElementById('cancelSeatSelectionBtn');
+            const confirmSeatSelectionBtn = document.getElementById('confirmSeatSelectionBtn');
+            const modalChairContainer = document.getElementById('modal-chair-container');
+            const staticChairContainer = document.getElementById('static-chair-container');
+            const selectedSeatDisplay = document.getElementById('selected-seat-display');
+            const selectedSeatInput = document.getElementById('selected-seat-input');
 
-        // --- FUNÇÕES DE GERAÇÃO E RENDERIZAÇÃO ---
+            // --- ELEMENTOS DA MÚSICA ---
+            const startOverlay = document.getElementById('start-overlay');
+            const startBtn = document.getElementById('start-btn');
+            const musicToggleBtn = document.getElementById('music-toggle-btn');
+            const volumeOnIcon = document.getElementById('volume-on-icon');
+            const volumeOffIcon = document.getElementById('volume-off-icon');
+            let musicStarted = false;
+            
+            // --- ESTADO DA APLICAÇÃO ---
+            let tempSelectedSeat = null;
+            // Simulação de assentos já ocupados. Carregamos os assentos salvos para persistência.
+            let occupiedSeats = ['F1C4', 'F2C8', 'F5C5', 'F6C1', 'F3C10'];
 
-        // Gera a visualização das cadeiras em um container
-        function renderChairs(container, isInteractive) {
-            container.innerHTML = ''; // Limpa o container
-            for (let row = 1; row <= 7; row++) {
-                for (let col = 1; col <= 12; col++) {
-                    const chair = document.createElement('div');
-                    const seatId = `F${row}C${col}`;
-                    
-                    if (col === 6 || col === 7) {
-                        chair.className = ''; // Corredor
-                    } else {
-                        const isOccupied = occupiedSeats.includes(seatId);
-                        chair.id = seatId;
+            const savedSeats = JSON.parse(localStorage.getItem('gotyEventOccupiedSeats'));
+            if (Array.isArray(savedSeats)) {
+                occupiedSeats = [...new Set([...occupiedSeats, ...savedSeats])];
+            }
+
+            // --- LÓGICA DA MÚSICA ---
+            // Efeitos de áudio para uma atmosfera ambiente
+            const reverb = new Tone.Reverb({ decay: 8, preDelay: 0.01 }).toDestination();
+            const chorus = new Tone.Chorus("2n", 2.5, 0.7).connect(reverb).start();
+
+            // Sintetizador com um som suave e pad-like
+            const synth = new Tone.PolySynth(Tone.Synth, {
+                oscillator: { type: 'triangle8' }, // Onda sonora suave
+                envelope: {
+                    attack: 2,   // Ataque lento para "swell"
+                    decay: 1,
+                    sustain: 0.5,
+                    release: 4 // Release longo para a nota desaparecer suavemente
+                }
+            }).connect(chorus);
+
+            // Progressão de acordes calma e lenta
+            const chords = [
+                ['C3', 'E3', 'G4'],
+                ['A2', 'C3', 'E4'],
+                ['F2', 'A2', 'C4'],
+                ['G2', 'B2', 'D4']
+            ];
+            let chordIndex = 0;
+
+            // Loop para tocar os acordes em um ritmo lento
+            const musicLoop = new Tone.Loop(time => {
+                const chord = chords[chordIndex % chords.length];
+                synth.triggerAttackRelease(chord, "1m", time); // Toca o acorde por uma medida inteira
+                chordIndex++;
+            }, "1m").start(0); // Um novo acorde a cada medida
+
+            // Ajusta o BPM e o volume para ser música de fundo
+            Tone.Transport.bpm.value = 65;
+            Tone.Destination.volume.value = -12; // Volume mais baixo
+
+            startBtn.addEventListener('click', async () => {
+                if (!musicStarted) {
+                    await Tone.start();
+                    Tone.Transport.start();
+                    musicStarted = true;
+                }
+                startOverlay.classList.add('hidden');
+            });
+
+            musicToggleBtn.addEventListener('click', () => {
+                Tone.Destination.mute = !Tone.Destination.mute;
+                volumeOnIcon.classList.toggle('hidden');
+                volumeOffIcon.classList.toggle('hidden');
+            });
+
+            // --- FUNÇÕES DE GERAÇÃO E RENDERIZAÇÃO ---
+
+            // Gera a visualização das cadeiras em um container
+            function renderChairs(container, isInteractive) {
+                container.innerHTML = ''; // Limpa o container
+                for (let row = 1; row <= 7; row++) {
+                    for (let col = 1; col <= 12; col++) {
+                        const chair = document.createElement('div');
+                        const seatId = `F${row}C${col}`;
                         
-                        if (isOccupied) {
-                            chair.className = 'bg-red-800/70 rounded-sm';
+                        if (col === 6 || col === 7) {
+                            chair.className = ''; // Corredor
                         } else {
-                            chair.className = 'bg-gray-600 rounded-sm transition-colors';
-                            if (isInteractive) {
-                                chair.classList.add('cursor-pointer', 'hover:bg-blue-400');
-                                chair.addEventListener('click', () => handleSeatClick(chair));
+                            const isOccupied = occupiedSeats.includes(seatId);
+                            chair.dataset.seatId = seatId;
+                            
+                            if (isOccupied) {
+                                chair.className = 'bg-red-800/70 rounded-sm';
+                            } else {
+                                chair.className = 'bg-gray-600 rounded-sm transition-colors';
+                                if (isInteractive) {
+                                    chair.classList.add('cursor-pointer', 'hover:bg-blue-400');
+                                    chair.addEventListener('click', () => handleSeatClick(chair));
+                                }
                             }
                         }
+                        container.appendChild(chair);
                     }
-                    container.appendChild(chair);
                 }
             }
-        }
 
-        // --- FUNÇÕES DE NAVEGAÇÃO ---
-        const showPage = (pageToShow) => {
-            pages.forEach(page => {
-                const isFlexPage = page !== homePage;
-                page.classList.toggle('hidden', page !== pageToShow);
-                page.classList.toggle('flex', page === pageToShow && isFlexPage);
-            });
-            window.scrollTo(0, 0);
-        };
+            // --- FUNÇÕES DE NAVEGAÇÃO ---
+            const showPage = (pageToShow) => {
+                pages.forEach(page => {
+                    page.classList.add('hidden');
+                });
+                pageToShow.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            };
 
-        // --- LÓGICA DE SELEÇÃO DE ASSENTOS ---
-        
-        function handleSeatClick(chairElement) {
-            // Remove a seleção anterior
-            const previouslySelected = modalChairContainer.querySelector('.border-blue-300');
-            if (previouslySelected) {
-                previouslySelected.classList.remove('bg-blue-500', 'border-2', 'border-blue-300');
-                previouslySelected.classList.add('bg-gray-600');
+            // --- LÓGICA DE SELEÇÃO DE ASSENTOS ---
+            
+            function handleSeatClick(chairElement) {
+                // Remove a seleção anterior
+                const previouslySelected = modalChairContainer.querySelector('.selected-seat-style');
+                if (previouslySelected) {
+                    previouslySelected.classList.remove('selected-seat-style', 'bg-blue-500', 'border-2', 'border-blue-300');
+                    previouslySelected.classList.add('bg-gray-600');
+                }
+
+                // Aplica estilo ao novo assento selecionado
+                chairElement.classList.add('selected-seat-style', 'bg-blue-500', 'border-2', 'border-blue-300');
+                chairElement.classList.remove('bg-gray-600');
+                
+                // Armazena o assento selecionado temporariamente
+                tempSelectedSeat = chairElement.dataset.seatId;
+                
+                // Habilita o botão de confirmação
+                confirmSeatSelectionBtn.disabled = false;
             }
-            
-            // Adiciona a nova seleção
-            chairElement.classList.add('bg-blue-500', 'border-2', 'border-blue-300');
-            chairElement.classList.remove('bg-gray-600');
-            
-            tempSelectedSeat = chairElement.id;
-            confirmSeatSelectionBtn.disabled = false;
-        }
 
-        function openSeatModal() {
-            tempSelectedSeat = selectedSeatInput.value; // Carrega seleção atual
+            openSeatModalBtn.addEventListener('click', () => {
+                seatSelectionModal.classList.remove('hidden');
+            });
+
+            cancelSeatSelectionBtn.addEventListener('click', () => {
+                seatSelectionModal.classList.add('hidden');
+                // Limpa seleção temporária se houver
+                const previouslySelected = modalChairContainer.querySelector('.selected-seat-style');
+                if (previouslySelected) {
+                     previouslySelected.classList.remove('selected-seat-style', 'bg-blue-500', 'border-2', 'border-blue-300');
+                     previouslySelected.classList.add('bg-gray-600');
+                }
+                tempSelectedSeat = null;
+                confirmSeatSelectionBtn.disabled = true;
+            });
+            
+            confirmSeatSelectionBtn.addEventListener('click', () => {
+                if (tempSelectedSeat) {
+                   // ...existing code...
+selectedSeatDisplay.textContent = `Assento: ${tempSelectedSeat}`;
+// ...existing code...
+                    selectedSeatDisplay.classList.remove('text-gray-400');
+                    selectedSeatInput.value = tempSelectedSeat;
+                    seatSelectionModal.classList.add('hidden');
+                }
+            });
+
+            // --- LÓGICA DOS FORMULÁRIOS ---
+
+            registrationForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                if (!selectedSeatInput.value) {
+                    // Adiciona um efeito visual para indicar a necessidade de selecionar o assento
+                    openSeatModalBtn.classList.add('ring-2', 'ring-red-500');
+                    setTimeout(() => {
+                         openSeatModalBtn.classList.remove('ring-2', 'ring-red-500');
+                    }, 1500);
+                    return;
+                }
+
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const seat = selectedSeatInput.value;
+
+                // Adiciona o assento à lista de ocupados e salva
+                occupiedSeats.push(seat);
+                localStorage.setItem('gotyEventOccupiedSeats', JSON.stringify(occupiedSeats));
+
+                // Prepara os dados para o QR Code
+                const qrCodeData = JSON.stringify({ name, email, seat, event: 'Game of the Year' });
+                qrcodeDiv.innerHTML = ''; // Limpa QR code anterior
+                new QRCode(qrcodeDiv, {
+                    text: qrCodeData,
+                    width: 256,
+                    height: 256,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+                
+                userNameDisplay.textContent = name;
+               // ...existing code...
+userSeatDisplay.textContent = `Assento: ${seat}`;
+// ...existing code...
+
+                formContainer.classList.add('hidden');
+                qrcodeContainer.classList.remove('hidden');
+
+                // Atualiza the visualização estática das cadeiras
+                renderChairs(staticChairContainer, false);
+                renderChairs(modalChairContainer, true); // E a do modal também
+            });
+            
+            artistForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                artistFormContainer.classList.add('hidden');
+                artistSuccessMessage.classList.remove('hidden');
+            });
+
+
+            // --- NAVEGAÇÃO ENTRE PÁGINAS ---
+            goToRegisterBtn.addEventListener('click', () => showPage(registrationPage));
+            workWithUsBtn.addEventListener('click', () => showPage(artistPage));
+            ourEventBtn.addEventListener('click', () => showPage(eventDetailsPage));
+            goToFoodCourtBtn.addEventListener('click', () => showPage(foodCourtPage));
+            goToOtherEventBtn.addEventListener('click', () => showPage(otherEventPage));
+
+            backBtns.forEach(btn => {
+                btn.addEventListener('click', () => showPage(homePage));
+            });
+
+            // --- NAVBAR: NAVEGAÇÃO ENTRE AS PÁGINAS ---
+            document.getElementById('nav-home').addEventListener('click', () => showPage(homePage));
+document.getElementById('nav-event').addEventListener('click', () => showPage(eventDetailsPage));
+document.getElementById('nav-register').addEventListener('click', () => showPage(registrationPage));
+document.getElementById('nav-artist').addEventListener('click', () => showPage(artistPage));
+document.getElementById('nav-food').addEventListener('click', () => showPage(foodCourtPage));
+document.getElementById('nav-other').addEventListener('click', () => showPage(otherEventPage));
+document.getElementById('navbar-logo').addEventListener('click', () => showPage(homePage));
+
+            // --- INICIALIZAÇÃO ---
+            renderChairs(staticChairContainer, false);
             renderChairs(modalChairContainer, true);
-            if(tempSelectedSeat) {
-                 const currentSeatEl = modalChairContainer.querySelector(`#${tempSelectedSeat}`);
-                 if(currentSeatEl) handleSeatClick(currentSeatEl);
-            }
-            seatSelectionModal.classList.remove('hidden');
-        }
-
-        function closeSeatModal() {
-            seatSelectionModal.classList.add('hidden');
-            tempSelectedSeat = null;
-            confirmSeatSelectionBtn.disabled = true;
-        }
-
-        function confirmSeatSelection() {
-            if (tempSelectedSeat) {
-                selectedSeatInput.value = tempSelectedSeat;
-                selectedSeatDisplay.textContent = `Assento ${tempSelectedSeat}`;
-                selectedSeatDisplay.classList.remove('text-gray-400');
-            }
-            closeSeatModal();
-        }
-
-        // --- LÓGICA DOS FORMULÁRIOS ---
-
-        registrationForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const seat = selectedSeatInput.value;
-
-            if (!name || !email) {
-                console.error('Por favor, preencha nome e email.');
-                return;
-            }
-            if (!seat) {
-                console.error('Por favor, selecione um assento.');
-                // Futuramente, mostrar um erro na UI
-                alert('Por favor, selecione um assento para continuar.');
-                return;
-            }
-
-            qrcodeDiv.innerHTML = '';
-            const qrData = JSON.stringify({
-                evento: "Warehouse Game Fest",
-                nome: name,
-                email: email,
-                assento: seat,
-                timestamp: new Date().toISOString()
-            });
-
-            new QRCode(qrcodeDiv, {
-                text: qrData,
-                width: 256, height: 256,
-                colorDark : "#000000", colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-
-            userNameDisplay.textContent = name;
-            userSeatDisplay.textContent = `Assento Reservado: ${seat}`;
-            formContainer.classList.add('hidden');
-            qrcodeContainer.classList.remove('hidden');
         });
-
-        artistForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            artistFormContainer.classList.add('hidden');
-            artistSuccessMessage.classList.remove('hidden');
-        });
-        
-        // --- FUNÇÕES DE RESET ---
-
-        function resetRegistrationForm() {
-            registrationForm.reset();
-            formContainer.classList.remove('hidden');
-            qrcodeContainer.classList.add('hidden');
-            qrcodeDiv.innerHTML = '';
-            selectedSeatInput.value = '';
-            selectedSeatDisplay.textContent = 'Nenhum assento selecionado';
-            selectedSeatDisplay.classList.add('text-gray-400');
-        }
-
-        function resetArtistForm() {
-            artistForm.reset();
-            artistFormContainer.classList.remove('hidden');
-            artistSuccessMessage.classList.add('hidden');
-        }
-        
-        // --- EVENT LISTENERS DE INICIALIZAÇÃO ---
-
-        goToRegisterBtn.addEventListener('click', () => showPage(registrationPage));
-        workWithUsBtn.addEventListener('click', () => showPage(artistPage));
-        ourEventBtn.addEventListener('click', () => showPage(eventDetailsPage));
-        goToFoodCourtBtn.addEventListener('click', () => showPage(foodCourtPage));
-        goToOtherEventBtn.addEventListener('click', () => showPage(otherEventPage));
-        
-        backBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                resetRegistrationForm();
-                resetArtistForm();
-                showPage(homePage);
-            });
-        });
-
-        openSeatModalBtn.addEventListener('click', openSeatModal);
-        cancelSeatSelectionBtn.addEventListener('click', closeSeatModal);
-        confirmSeatSelectionBtn.addEventListener('click', confirmSeatSelection);
-
-        // --- INICIALIZAÇÃO DA PÁGINA ---
-        showPage(homePage);
-        renderChairs(staticChairContainer, false); // Renderiza o mapa estático na página de detalhes
-
     </script>
 </body>
 </html>
